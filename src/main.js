@@ -21,7 +21,7 @@ let page = 1;
 let per_Page = 15;
 let totalPages = 0;
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
   hideLoadMoreButton();
   searchWord = inputSearch.value.trim();
@@ -40,50 +40,46 @@ form.addEventListener('submit', event => {
   page = 1;
   per_Page = document.querySelector('.page_per_selest').value;
 
-  getImagesByQuery(searchWord, page, per_Page)
-    .then(images => {
-      hideLoader();
+  try {
+    const images = await getImagesByQuery(searchWord, page, per_Page);
+    hideLoader();
 
-      if (images.hits.length === 0) {
-        return iziToast.info({
-          message: `There are no results for your query.`,
-          position: 'topRight',
-        });
-      }
+    if (images.hits.length === 0) {
+      return iziToast.info({
+        message: `There are no results for your query.`,
+        position: 'topRight',
+      });
+    }
 
-      createGallery(images.hits);
-      totalPages = images.totalHits / per_Page;
-      if (totalPages > 1) {
-        page++;
-        showLoadMoreButton();
-      } else {
-        return iziToast.success({
-          message: `This is all that was found by query.`,
-          position: 'topRight',
-        });
-      }
-    })
-
-    .catch(error => {
-      hideLoader();
-      console.error('Error fetching images:', error);
-    });
+    createGallery(images.hits);
+    totalPages = images.totalHits / per_Page;
+    if (totalPages > 1) {
+      page++;
+      showLoadMoreButton();
+    } else {
+      return iziToast.success({
+        message: `This is all that was found by query.`,
+        position: 'topRight',
+      });
+    }
+  } catch (error) {
+    hideLoader();
+    console.error('Error fetching images:', error);
+  }
 
   form.reset();
 });
 
 btnMore.addEventListener('click', async () => {
-  getImagesByQuery(searchWord, page, per_Page)
-    .then(images => {
-      createGallery(images.hits);
-      scrollPage();
-    })
-
-    .catch(error => {
-      console.error('Error click button images:', error);
-    });
-
-  page++;
+  showLoader();
+  try {
+    const images = await getImagesByQuery(searchWord, page, per_Page);
+    hideLoader();
+    createGallery(images.hits);
+    scrollPage();
+  } catch (error) {
+    console.error('Error click button images:', error);
+  }
 
   if (totalPages <= page) {
     hideLoadMoreButton();
@@ -93,6 +89,7 @@ btnMore.addEventListener('click', async () => {
       position: 'topRight',
     });
   }
+  page++;
 });
 
 function scrollPage() {
