@@ -129,9 +129,9 @@ button:hover {
 
 .loader {
   display: block;
-  margin: 0 auto 24px;
-  width: 32px;
-  height: 32px;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
   position: relative;
   border-radius: 50%;
   color: #FF3D00;
@@ -187,4 +187,11 @@ button:hover {
   pointer-events: auto;
 
 
+}
+
+.loader.visible {
+
+  width: 32px;
+  height: 32px;
+  margin-bottom: 24px;
 }
