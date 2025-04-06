@@ -129,7 +129,7 @@ button:hover {
 
 .loader {
   display: block;
-  margin: 0 auto;
+  margin: 0 auto 24px;
   width: 32px;
   height: 32px;
   position: relative;
